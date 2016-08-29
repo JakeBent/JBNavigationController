@@ -56,8 +56,6 @@ class ViewController: UIViewController {
         let colorIndex = Int(arc4random_uniform(UInt32(ViewController.colors.count)))
         view.backgroundColor = ViewController.colors[colorIndex].color
         title = ViewController.colors[colorIndex].title.uppercaseString
-
-
     }
 
     @objc private func pushNewViewController() {
