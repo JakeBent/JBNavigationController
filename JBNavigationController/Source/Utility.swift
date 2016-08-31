@@ -9,8 +9,12 @@
 import UIKit
 
 class Utility: NSObject {
-    static let deviceHeight = UIScreen.mainScreen().bounds.height
-    static let deviceWidth = UIScreen.mainScreen().bounds.width
+    static var deviceHeight: CGFloat {
+        return UIScreen.mainScreen().bounds.height
+    }
+    static var deviceWidth: CGFloat {
+        return UIScreen.mainScreen().bounds.width
+    }
 
     static let colors = [
         UIColor.redColor(),
