@@ -9,11 +9,25 @@
 import UIKit
 
 private extension Selector {
-    static let popSwipe = #selector(JBNavigationController.popSwipe(_:))
+    static let swipe = #selector(JBNavigationController.swipe(_:))
 }
 
 class JBNavigationController: UINavigationController, UINavigationControllerDelegate {
+
+    enum JBNavigationDirection {
+        case Up, Down, Left, Right
+
+        enum JBNavigationAxis {
+            case Horizontal, Vertical
+        }
+
+        var axis: JBNavigationAxis {
+            return self == .Left || self == .Right ? .Horizontal : .Vertical
+        }
+    }
+
     static var animationDuration: NSTimeInterval = 0.3
+    var navigationDirection: JBNavigationDirection = .Right
 
     private var interactionController: UIPercentDrivenInteractiveTransition? = nil
     private var forwardHistory: UIViewController? = nil
@@ -25,7 +39,7 @@ class JBNavigationController: UINavigationController, UINavigationControllerDele
 
     func navigationController(navigationController: UINavigationController, willShowViewController viewController: UIViewController, animated: Bool) {
 
-        viewController.view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: .popSwipe))
+        viewController.view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: .swipe))
     }
 
     func navigationController(navigationController: UINavigationController, didShowViewController viewController: UIViewController, animated: Bool) {
@@ -42,10 +56,26 @@ class JBNavigationController: UINavigationController, UINavigationControllerDele
         case None
     }
 
-    func popSwipe(gesture: UIScreenEdgePanGestureRecognizer) {
+    func swipe(gesture: UIScreenEdgePanGestureRecognizer) {
         guard let gestureView = gesture.view else { return }
-        let velocity = gesture.velocityInView(gestureView).x
-        let translation = gesture.translationInView(gestureView).x
+
+        var velocity: CGFloat
+        var translation: CGFloat
+
+        switch navigationDirection {
+        case .Right:
+            velocity = gesture.velocityInView(gestureView).x
+            translation = gesture.translationInView(gestureView).x
+        case .Left:
+            velocity = -gesture.velocityInView(gestureView).x
+            translation = -gesture.translationInView(gestureView).x
+        case .Up:
+            velocity = gesture.velocityInView(gestureView).y
+            translation = gesture.translationInView(gestureView).y
+        case .Down:
+            velocity = -gesture.velocityInView(gestureView).y
+            translation = -gesture.translationInView(gestureView).y
+        }
 
         if gesture.state == .Began {
             navigationState = velocity > 0 ? .Popping : .Pushing
@@ -107,10 +137,10 @@ class JBNavigationController: UINavigationController, UINavigationControllerDele
 
         switch operation {
         case .Push:
-            return JBFromRightInAnimator()
+            return JBInAnimator(direction: navigationDirection)
         case .Pop:
             forwardHistory = fromVC
-            return JBFromRightOutAnimator()
+            return JBOutAnimator(direction: navigationDirection)
         default:
             return nil
         }

@@ -15,8 +15,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 
+        let navController = JBNavigationController(rootViewController: ViewController())
+        navController.navigationDirection = .Down
+
         self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
-        self.window?.rootViewController = JBNavigationController(rootViewController: ViewController())
+        self.window?.rootViewController = navController
         self.window?.makeKeyAndVisible()
 
         return true

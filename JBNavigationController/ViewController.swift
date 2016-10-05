@@ -44,6 +44,9 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        view.layer.borderWidth = 2
+        view.layer.borderColor = UIColor.blackColor().CGColor
+
         view.addSubview(pushButton)
         pushButton.translatesAutoresizingMaskIntoConstraints = false
         pushButton.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true

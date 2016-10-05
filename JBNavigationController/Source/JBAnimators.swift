@@ -8,7 +8,14 @@
 
 import UIKit
 
-class JBFromRightInAnimator: NSObject, UIViewControllerAnimatedTransitioning {
+class JBInAnimator: NSObject, UIViewControllerAnimatedTransitioning {
+    let direction: JBNavigationController.JBNavigationDirection
+
+    init(direction: JBNavigationController.JBNavigationDirection) {
+        self.direction = direction
+        super.init()
+    }
+
     func transitionDuration(transitionContext: UIViewControllerContextTransitioning?) -> NSTimeInterval {
         return JBNavigationController.animationDuration
     }
@@ -23,17 +30,42 @@ class JBFromRightInAnimator: NSObject, UIViewControllerAnimatedTransitioning {
         containerView.addSubview(fromViewController.view)
         containerView.addSubview(toViewController.view)
 
-        toViewController.view.frame = CGRect(x: Utility.deviceWidth, y: 0, width: Utility.deviceWidth, height: Utility.deviceHeight)
+        var fromFrame: CGRect
+        let toFrame = CGRect(x: 0, y: 0, width: Utility.deviceWidth, height: Utility.deviceHeight)
+
+        switch direction {
+        case .Left:
+            fromFrame = CGRect(x: -Utility.deviceWidth, y: 0, width: Utility.deviceWidth, height: Utility.deviceHeight)
+
+        case .Right:
+            fromFrame = CGRect(x: Utility.deviceWidth, y: 0, width: Utility.deviceWidth, height: Utility.deviceHeight)
+
+        case .Up:
+            fromFrame = CGRect(x: 0, y: Utility.deviceHeight, width: Utility.deviceWidth, height: Utility.deviceHeight)
+
+        case .Down:
+            fromFrame = CGRect(x: 0, y: -Utility.deviceHeight, width: Utility.deviceWidth, height: Utility.deviceHeight)
+
+        }
+
+        toViewController.view.frame = fromFrame
 
         UIView.animateWithDuration(transitionDuration(transitionContext), animations: { () -> Void in
-            toViewController.view.frame = CGRect(x: 0, y: 0, width: Utility.deviceWidth, height: Utility.deviceHeight)
+            toViewController.view.frame = toFrame
         }) { (_) -> Void in
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled())
         }
     }
 }
 
-class JBFromRightOutAnimator: NSObject, UIViewControllerAnimatedTransitioning {
+class JBOutAnimator: NSObject, UIViewControllerAnimatedTransitioning {
+    let direction: JBNavigationController.JBNavigationDirection
+
+    init(direction: JBNavigationController.JBNavigationDirection) {
+        self.direction = direction
+        super.init()
+    }
+
     func transitionDuration(transitionContext: UIViewControllerContextTransitioning?) -> NSTimeInterval {
         return JBNavigationController.animationDuration
     }
@@ -48,10 +80,28 @@ class JBFromRightOutAnimator: NSObject, UIViewControllerAnimatedTransitioning {
         containerView.addSubview(toViewController.view)
         containerView.addSubview(fromViewController.view)
 
-        fromViewController.view.frame = CGRect(x: 0, y: 0, width: Utility.deviceWidth, height: Utility.deviceHeight)
+        let fromFrame = CGRect(x: 0, y: 0, width: Utility.deviceWidth, height: Utility.deviceHeight)
+        var toFrame: CGRect
+
+        switch direction {
+        case .Left:
+            toFrame = CGRect(x: -Utility.deviceWidth, y: 0, width: Utility.deviceWidth, height: Utility.deviceHeight)
+
+        case .Right:
+            toFrame = CGRect(x: Utility.deviceWidth, y: 0, width: Utility.deviceWidth, height: Utility.deviceHeight)
+
+        case .Up:
+            toFrame = CGRect(x: 0, y: Utility.deviceHeight, width: Utility.deviceWidth, height: Utility.deviceHeight)
+
+        case .Down:
+            toFrame = CGRect(x: 0, y: -Utility.deviceHeight, width: Utility.deviceWidth, height: Utility.deviceHeight)
+            
+        }
+
+        fromViewController.view.frame = fromFrame
 
         UIView.animateWithDuration(transitionDuration(transitionContext), animations: { () -> Void in
-            fromViewController.view.frame = CGRect(x: Utility.deviceWidth, y: 0, width: Utility.deviceWidth, height: Utility.deviceHeight)
+            fromViewController.view.frame = toFrame
         }) { (_) -> Void in
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled())
         }
